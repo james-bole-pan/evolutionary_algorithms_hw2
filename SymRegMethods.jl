@@ -6,7 +6,7 @@ using SymPy
 const FUNCTIONS = [:+, :-, :*, :/, :sin, :cos]
 const TERMINALS = [:x]
 
-export load_data, random_expression, evaluate_expr, mean_squared_error
+export load_data, random_expression, evaluate_expr, mean_squared_error, random_search
 
 function random_constant()
     return 20 * rand() - 10
@@ -23,7 +23,7 @@ function load_data(filepath)
     return data
 end
 
-function random_expression(depth=3)
+function random_expression(depth)
     # 30% of the time, return a terminal
     if depth == 0 || rand() < 0.3 
         # Choose between a variable (e.g., x) or a constant
@@ -46,7 +46,11 @@ end
 function evaluate_expr(expr, x_values)
     y_values = []  # Initialize an empty array of the same number type as x_values
     for val in x_values
-        push!(y_values, eval(:(let x = $val; $expr end)))
+        try
+            push!(y_values, eval(:(let x = $val; $expr end)))
+        catch
+            push!(y_values, NaN)
+        end
     end
     return y_values
 end
@@ -58,14 +62,11 @@ function mean_squared_error(y_values, y_values_pred)
     return sum((y_values .- y_values_pred).^2) / length(y_values)
 end
 
-function random_search(data, evaluation=1000)
-    x_values = [x for (x, y) in data]
-    y_values = [y for (x, y) in data]
-
+function random_search(x_values, y_values, evaluation)
     mse_history = []
-    best_expr = nothing
-    best_mse = Inf
-
+    expr = random_expression()
+    best_expr = random_expression()
+    best_mse = 10^9
     for i in 1:evaluation
         expr = random_expression()
         y_values_pred = evaluate_expr(expr, x_values)
@@ -74,7 +75,7 @@ function random_search(data, evaluation=1000)
             best_mse = mse
             best_expr = expr
         end
-        push!(mse_history, mse)
+        push!(mse_history, best_mse)
     end
     return best_expr, best_mse, mse_history
 end

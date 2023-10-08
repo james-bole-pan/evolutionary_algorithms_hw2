@@ -4,7 +4,7 @@ using .SymRegMethods
 
 bronze_data = load_data("data/bronze.txt")
 
-expr = random_expression()
+expr = random_expression(5)
 
 x_values = [x for (x, y) in bronze_data]
 y_values = [y for (x, y) in bronze_data]
