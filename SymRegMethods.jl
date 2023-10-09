@@ -6,7 +6,8 @@ using SymPy
 const FUNCTIONS = [:+, :-, :*, :/, :sin, :cos]
 const TERMINALS = [:x]
 
-export load_data, random_expression, evaluate_expr, mean_absolute_error, random_search
+export load_data, random_constant, random_expression, evaluate_expr, mean_absolute_error, random_search
+export FUNCTIONS, TERMINALS
 
 function random_constant()
     return 20 * rand() - 10
@@ -63,22 +64,38 @@ function mean_absolute_error(y_values, y_values_pred)
 end
 
 function random_search(x_values, y_values, evaluation, depth)
-    mse_history = []
+    mae_history = []
     expr = random_expression(depth)
     best_expr = random_expression(depth)
-    best_mse = 10^9
+    best_mae = 10^9
     for i in 1:evaluation
         expr = random_expression(depth)
         y_values_pred = evaluate_expr(expr, x_values)
-        mse = mean_absolute_error(y_values, y_values_pred)
-        if mse < best_mse
-            best_mse = mse
+        mae = mean_absolute_error(y_values, y_values_pred)
+        if mae < best_mae
+            best_mae = mae
             best_expr = expr
         end
-        push!(mse_history, best_mse)
+        push!(mae_history, best_mae)
     end
-    return best_expr, best_mse, mse_history
+    return best_expr, best_mae, mae_history
+end
+
+function hill_climber(x_values, y_values, evaluation, depth)
+    mae_history = []
+    expr = random_expression(depth)
+    best_expr = random_expression(depth)
+    best_mae = 10^9
+    for i in 1:evaluation
+        expr = mutate(expr)
+        y_values_pred = evaluate_expr(expr, x_values)
+        mae = mean_absolute_error(y_values, y_values_pred)
+        if mae < best_mae
+            best_mae = mae
+            best_expr = expr
+        end
+        push!(mae_history, best_mae)
+    end
 end
 
 end
-
