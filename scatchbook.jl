@@ -8,25 +8,32 @@ x_values = [x for (x, y) in bronze_data]
 y_values = [y for (x, y) in bronze_data]
 
 evaluation = 100
-depth = 3
+depth = 10
 
+best_expr_hc, best_mae_hc, mae_history_hc = hill_climber(x_values, y_values, evaluation, depth)
 best_expr_rs, best_mae_rs, mae_history_rs = random_search(x_values, y_values, evaluation, depth)
 
+y_values_pred_hc = evaluate_expr(best_expr_hc, x_values)
 y_values_pred_rs = evaluate_expr(best_expr_rs, x_values)
+best_mae_hc = round(best_mae_hc, digits=2)
 best_mae_rs = round(best_mae_rs, digits=2)
 
 # plot the data
 p1 = plot(x_values, y_values, label="Actual Data (Bronze)",lw=3)
 plot!(x_values, y_values_pred_rs, label="Predicted Data (Random Search)",lw=3)
+plot!(x_values, y_values_pred_hc, label="Predicted Data (Hill Climber)",lw=3)
 xlabel!("X")
 ylabel!("Y")
-annotate!(0.5, 15, text("Expression: $best_expr_rs", 9, :left))
+annotate!(0.5, 15, text("RS Expression: $best_expr_rs", 9, :left))
+annotate!(0.5, 12, text("HC Expression: $best_expr_hc", 9, :left))
 plot!(left_margin = 20px, topmargin = 15px, ylim=(-18, 25))
-title!("\nMean Absolute Error: $best_mae_rs", titlefontsize=12)
+title!("\nMean Absolute Error: \n$best_mae_rs (RS)\n$best_mae_hc (HC)", titlefontsize=12)
 
 # plot the MAE history
 mae_history_rs = log10.(mae_history_rs)
+mae_history_hc = log10.(mae_history_hc)
 p2 = plot(mae_history_rs, label="Random Search",lw=3)
+plot!(mae_history_hc, label="Hill Climber",lw=3)
 plot!(left_margin = 20px)
 xlabel!("Evaluation")
 ylabel!("log(MAE)")
