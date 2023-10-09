@@ -6,7 +6,7 @@ using SymPy
 const FUNCTIONS = [:+, :-, :*, :/, :sin, :cos]
 const TERMINALS = [:x]
 
-export load_data, random_expression, evaluate_expr, mean_squared_error, random_search
+export load_data, random_expression, evaluate_expr, mean_absolute_error, random_search
 
 function random_constant()
     return 20 * rand() - 10
@@ -55,22 +55,22 @@ function evaluate_expr(expr, x_values)
     return y_values
 end
 
-function mean_squared_error(y_values, y_values_pred)
+function mean_absolute_error(y_values, y_values_pred)
     if length(y_values) != length(y_values_pred)
         throw(ArgumentError("Input vectors must have the same length"))
     end
-    return sum((y_values .- y_values_pred).^2) / length(y_values)
+    return sum(abs.(y_values .- y_values_pred)) / length(y_values)
 end
 
-function random_search(x_values, y_values, evaluation)
+function random_search(x_values, y_values, evaluation, depth)
     mse_history = []
-    expr = random_expression()
-    best_expr = random_expression()
+    expr = random_expression(depth)
+    best_expr = random_expression(depth)
     best_mse = 10^9
     for i in 1:evaluation
-        expr = random_expression()
+        expr = random_expression(depth)
         y_values_pred = evaluate_expr(expr, x_values)
-        mse = mean_squared_error(y_values, y_values_pred)
+        mse = mean_absolute_error(y_values, y_values_pred)
         if mse < best_mse
             best_mse = mse
             best_expr = expr

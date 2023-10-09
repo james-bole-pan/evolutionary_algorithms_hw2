@@ -7,12 +7,13 @@ bronze_data = load_data("data/bronze.txt")
 x_values = [x for (x, y) in bronze_data]
 y_values = [y for (x, y) in bronze_data]
 
-evaluation = 1000
+evaluation = 100
+depth = 3
 
-best_expr, best_mse, mse_history = random_search(x_values, y_values, evaluation)
+best_expr, best_mae, mae_history = random_search(x_values, y_values, evaluation, depth)
 
 y_values_pred = evaluate_expr(best_expr, x_values)
-best_mse = round(best_mse, digits=2)
+best_mae = round(best_mae, digits=2)
 
 # plot the data
 p1 = plot(x_values, y_values, label="Actual Data (Bronze)",lw=3)
@@ -21,14 +22,14 @@ xlabel!("X")
 ylabel!("Y")
 annotate!(0.5, 15, text("Expression: $best_expr", 9, :left))
 plot!(left_margin = 20px, topmargin = 15px, ylim=(-18, 25))
-title!("\nMean Squared Error: $best_mse", titlefontsize=12)
+title!("\nMean Absolute Error: $best_mae", titlefontsize=12)
 
-# plot the MSE history
-mse_history = log10.(mse_history)
-p2 = plot(mse_history, label="Random Search",lw=3)
+# plot the MAE history
+mae_history = log10.(mae_history)
+p2 = plot(mae_history, label="Random Search",lw=3)
 plot!(left_margin = 20px)
 xlabel!("Evaluation")
-ylabel!("log(MSE)")
+ylabel!("log(MAE)")
 
 p = plot(p1, p2, layout=(2, 1))
 plot!(size=(800, 1000))

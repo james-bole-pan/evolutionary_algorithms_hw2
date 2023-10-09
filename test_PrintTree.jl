@@ -13,7 +13,6 @@ AbstractTrees.children(s) = []
 
 expr = random_expression(2)
 println("Expression: $expr")
-println(expr.head)
 println(expr.args)
 print_tree(expr)
 
