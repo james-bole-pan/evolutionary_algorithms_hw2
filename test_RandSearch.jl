@@ -7,7 +7,7 @@ bronze_data = load_data("data/bronze.txt")
 x_values = [x for (x, y) in bronze_data]
 y_values = [y for (x, y) in bronze_data]
 
-evaluation = 100
+evaluation = 10
 depth = 3
 
 best_expr_rs, best_mae_rs, mae_history_rs = random_search(x_values, y_values, evaluation, depth)

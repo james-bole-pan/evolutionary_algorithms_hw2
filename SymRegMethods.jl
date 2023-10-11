@@ -67,8 +67,9 @@ function random_search(x_values, y_values, evaluation, depth)
     mae_history = []
     expr = random_expression(depth)
     best_expr = random_expression(depth)
-    best_mae = 10^9
+    best_mae = mean_absolute_error(y_values, evaluate_expr(best_expr, x_values))
     for i in 1:evaluation
+        println(i)
         expr = random_expression(depth)
         y_values_pred = evaluate_expr(expr, x_values)
         mae = mean_absolute_error(y_values, y_values_pred)
@@ -76,6 +77,7 @@ function random_search(x_values, y_values, evaluation, depth)
             best_mae = mae
             best_expr = expr
         end
+        println(best_expr)
         push!(mae_history, best_mae)
     end
     return best_expr, best_mae, mae_history
@@ -118,7 +120,7 @@ function hill_climber(x_values, y_values, evaluation, depth)
     mae_history = []
     expr = random_expression(depth)
     best_expr = random_expression(depth)
-    best_mae = 10^9
+    best_mae = mean_absolute_error(y_values, evaluate_expr(best_expr, x_values))
     for i in 1:evaluation
         println(i)
         expr = mutate(expr)

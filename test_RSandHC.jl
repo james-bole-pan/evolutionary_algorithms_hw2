@@ -7,7 +7,7 @@ bronze_data = load_data("data/bronze.txt")
 x_values = [x for (x, y) in bronze_data]
 y_values = [y for (x, y) in bronze_data]
 
-evaluation = 100
+evaluation = 2000
 depth = 10
 
 best_expr_hc, best_mae_hc, mae_history_hc = hill_climber(x_values, y_values, evaluation, depth)
