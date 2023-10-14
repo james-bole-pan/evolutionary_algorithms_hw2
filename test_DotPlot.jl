@@ -3,8 +3,8 @@ using Plots.PlotMeasures
 using .SymRegMethods
 
 all_generations = []
-GENERATION = 100
-POPULATION = 50
+GENERATION = 10
+POPULATION = 5
 
 function new_population(size,depth)
     population = []

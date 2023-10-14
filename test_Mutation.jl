@@ -8,6 +8,7 @@ const PROBABILITY_IN_PLACE_MUTATION = 0.9 # in-place mutation vs. new subtree
 const PROBABILITY_SYMBOL_MUTATION = 0.5 # symbol vs. constant
 
 function mutate(expr)
+    expr = deepcopy(expr)
     if rand() < (1 - PROBABILITY_MUTATION) # probability of not mutating
         return expr
     else
