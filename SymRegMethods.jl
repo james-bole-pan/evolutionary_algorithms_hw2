@@ -2,12 +2,13 @@ module SymRegMethods
 
 using Random
 using SymPy
+using Plots
 
 const FUNCTIONS = [:+, :-, :*, :/, :sin, :cos]
 const TERMINALS = [:x]
 
 export load_data, random_constant, random_expression, evaluate_expr, mean_absolute_error, random_search, mutate, hill_climber, best_expr_of_list
-export crossover, tournament_selection, genetic_programming
+export crossover, tournament_selection, genetic_programming, genetic_programming_stricter_selection
 
 export FUNCTIONS, TERMINALS
 
@@ -214,6 +215,26 @@ function tournament_selection(population, x_values, y_values)
     end
 end
 
+function tournament_selection_stricter(population, x_values, y_values)
+    # randomly select 2 individuals from the population
+    # return the individual with the lowest MAE
+    # if there is a tie, return the first individual
+    # (this is arbitrary)
+    individual1 = population[rand(1:length(population))]
+    individual2 = population[rand(1:length(population))]
+    individual3 = population[rand(1:length(population))]
+    mae1 = mean_absolute_error(y_values, evaluate_expr(individual1, x_values))
+    mae2 = mean_absolute_error(y_values, evaluate_expr(individual2, x_values))
+    mae3 = mean_absolute_error(y_values, evaluate_expr(individual3, x_values))
+    if mae1 < mae2 && mae1 < mae3
+        return individual1
+    elseif mae2 < mae1 && mae2 < mae3
+        return individual2
+    else
+        return individual3
+    end
+end
+
 function genetic_programming(population_size, x_values, y_values, evaluation, depth)
     mae_history = []
     population = [random_expression(depth) for i in 1:population_size]
@@ -225,6 +246,41 @@ function genetic_programming(population_size, x_values, y_values, evaluation, de
         while length(new_population) < population_size
             parent1 = tournament_selection(population, x_values, y_values)
             parent2 = tournament_selection(population, x_values, y_values)
+            child1, child2 = crossover(parent1, parent2)
+            child1 = mutate(child1)
+            child2 = mutate(child2)
+            push!(new_population, child1)
+            push!(new_population, child2)
+        end
+        population = new_population
+        pop_best_expr, pop_best_mae = best_expr_of_list(population, x_values, y_values)
+        if pop_best_mae < best_mae
+            best_mae = pop_best_mae
+            best_expr = pop_best_expr
+            y_values_pred = evaluate_expr(best_expr, x_values)
+            plot(x_values, y_values, label="Actual Data",lw=3)
+            plot!(x_values, y_values_pred, label="Predicted Data",lw=3)
+            plot!(title = "Evaluation $i, MAE: $best_mae")
+            print("here")
+            savefig("movie/gp_$i.png")
+        end
+        println(best_expr)
+        push!(mae_history, best_mae)
+    end
+    return best_expr, best_mae, mae_history
+end
+
+function genetic_programming_stricter_selection(population_size, x_values, y_values, evaluation, depth)
+    mae_history = []
+    population = [random_expression(depth) for i in 1:population_size]
+    best_expr = population[1]
+    best_mae = mean_absolute_error(y_values, evaluate_expr(best_expr, x_values))
+    for i in 1:evaluation
+        println(i)
+        new_population = []
+        while length(new_population) < population_size
+            parent1 = tournament_selection_stricter(population, x_values, y_values)
+            parent2 = tournament_selection_stricter(population, x_values, y_values)
             child1, child2 = crossover(parent1, parent2)
             child1 = mutate(child1)
             child2 = mutate(child2)
