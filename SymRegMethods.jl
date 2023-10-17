@@ -182,6 +182,9 @@ function replace_subexpr!(main_expr, old_subexpr, new_subexpr)
         if main_expr.args[i] == old_subexpr
             main_expr.args[i] = new_subexpr
         elseif isa(main_expr.args[i], Expr)
+            println("main_expr.args[i]: ", main_expr.args[i])
+            println("old_subexpr: ", old_subexpr)
+            println("new_subexpr: ", new_subexpr)
             main_expr.args[i] = replace_subexpr!(main_expr.args[i], old_subexpr, new_subexpr)
         end
     end
@@ -258,12 +261,12 @@ function genetic_programming(population_size, x_values, y_values, evaluation, de
         if pop_best_mae < best_mae
             best_mae = pop_best_mae
             best_expr = pop_best_expr
-            y_values_pred = evaluate_expr(best_expr, x_values)
-            plot(x_values, y_values, label="Actual Data",lw=3)
-            plot!(x_values, y_values_pred, label="Predicted Data",lw=3)
-            plot!(title = "Evaluation $i, MAE: $best_mae")
-            print("here")
-            savefig("movie/gp_$i.png")
+            # y_values_pred = evaluate_expr(best_expr, x_values)
+            # plot(x_values, y_values, label="Actual Data",lw=3)
+            # plot!(x_values, y_values_pred, label="Predicted Data",lw=3)
+            # plot!(title = "Evaluation $i, MAE: $best_mae")
+            # println("here")
+            # savefig("movie/gp_$i.png")
         end
         println(best_expr)
         push!(mae_history, best_mae)

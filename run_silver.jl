@@ -22,7 +22,7 @@ all_best_expr_gp = []
 all_best_expr_gp_var = []
 
 evaluation = 50
-depth = 3
+depth = 5
 population_size = 10
 
 for i in 1:num_runs
