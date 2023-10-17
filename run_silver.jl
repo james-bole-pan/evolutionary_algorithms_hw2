@@ -3,14 +3,14 @@ using Plots
 using Plots.PlotMeasures
 using Statistics
 # generate a simple case for testing
-data = load_data("data/bronze.txt")
+data = load_data("data/Silver.txt")
 
 x_values = [x for (x, y) in data]
 y_values = [y for (x, y) in data]
 
 num_runs = 2
 
-data_name = "bronze"
+data_name = "silver"
 
 all_mae_histories_hc = []
 all_mae_histories_rs = []

@@ -182,12 +182,13 @@ function replace_subexpr!(main_expr, old_subexpr, new_subexpr)
         if main_expr.args[i] == old_subexpr
             main_expr.args[i] = new_subexpr
         elseif isa(main_expr.args[i], Expr)
-            replace_subexpr!(main_expr.args[i], old_subexpr, new_subexpr)
+            main_expr.args[i] = replace_subexpr!(main_expr.args[i], old_subexpr, new_subexpr)
         end
     end
     
     return main_expr
 end
+
 
 function crossover(parent1, parent2)
     subexpr1, _ = random_subexpr(deepcopy(parent1))
