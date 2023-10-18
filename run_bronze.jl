@@ -8,7 +8,11 @@ data = load_data("data/bronze.txt")
 x_values = [x for (x, y) in data]
 y_values = [y for (x, y) in data]
 
-num_runs = 3
+indices = sort(rand(1:length(x_values), 100))
+x_values = x_values[indices]
+y_values = y_values[indices]
+
+num_runs = 2
 
 data_name = "bronze"
 
@@ -21,9 +25,9 @@ all_best_expr_rs = []
 all_best_expr_gp = []
 all_best_expr_gp_var = []
 
-evaluation = 50
+evaluation = 1000
 depth = 3
-population_size = 10
+population_size = 50
 
 for i in 1:num_runs
     println("Run $i")

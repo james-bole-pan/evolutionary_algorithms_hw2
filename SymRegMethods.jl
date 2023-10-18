@@ -174,23 +174,35 @@ function random_subexpr(expr, depth=0)
 end
 
 function replace_subexpr!(main_expr, old_subexpr, new_subexpr)
+    # Base check: if the main expression matches the old one, replace it
     if main_expr == old_subexpr
         return new_subexpr
     end
 
+    changed = false  # A flag to check if any part of main_expr has been changed
+
     for i in 1:length(main_expr.args)
+        # If the argument matches the old expression, replace it
         if main_expr.args[i] == old_subexpr
             main_expr.args[i] = new_subexpr
+            changed = true
+        # If the argument is an Expr itself, recursively process it
         elseif isa(main_expr.args[i], Expr)
-            println("main_expr.args[i]: ", main_expr.args[i])
-            println("old_subexpr: ", old_subexpr)
-            println("new_subexpr: ", new_subexpr)
-            main_expr.args[i] = replace_subexpr!(main_expr.args[i], old_subexpr, new_subexpr)
+            original = deepcopy(main_expr.args[i])
+            main_expr.args[i] = replace_subexpr!(deepcopy(main_expr.args[i]), old_subexpr, new_subexpr)
+            # Check if the recursive call changed anything
+            if original != main_expr.args[i]
+                changed = true
+            end
         end
     end
-    
+    # If no changes were made to any part of main_expr, break out of recursion early
+    if !changed
+        return main_expr
+    end
     return main_expr
 end
+
 
 
 function crossover(parent1, parent2)
