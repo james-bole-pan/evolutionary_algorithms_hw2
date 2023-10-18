@@ -2,12 +2,16 @@ using Plots
 using Plots.PlotMeasures
 using .SymRegMethods
 
-bronze_data = load_data("data/bronze.txt")
+data = load_data("data/bronze.txt")
 
-x_values = [x for (x, y) in bronze_data]
-y_values = [y for (x, y) in bronze_data]
+x_values = [x for (x, y) in data]
+y_values = [y for (x, y) in data]
 
-evaluation = 10
+indices = sort(rand(1:length(x_values), 100))
+x_values = x_values[indices]
+y_values = y_values[indices]
+
+evaluation = 10000
 depth = 3
 
 function random_search_for_movie(x_values, y_values, evaluation, depth)
@@ -61,7 +65,7 @@ function genetic_programming_for_movie(population_size, x_values, y_values, eval
             plot(x_values, y_values, label="Actual Data",lw=3)
             plot!(x_values, y_values_pred, label="Predicted Data",lw=3)
             plot!(title = "Evaluation $i, MAE: $best_mae")
-            print("here")
+            println("here")
             savefig("movie/gp_$i.png")
         end
         println(best_expr)
@@ -70,4 +74,4 @@ function genetic_programming_for_movie(population_size, x_values, y_values, eval
     return best_expr, best_mae, mae_history
 end
 
-best_expr_rs, best_mae_rs, mae_history_rs = genetic_programming_for_movie(20, x_values, y_values, evaluation, depth)
+best_expr_rs, best_mae_rs, mae_history_rs = random_search_for_movie(x_values, y_values, evaluation, depth)
